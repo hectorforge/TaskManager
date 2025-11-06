@@ -1,0 +1,147 @@
+﻿@page
+@model TaskManager.Pages.IndexModel
+@{
+    ViewData["Title"] = "Gestor de Tareas";
+}
+
+<div class="header">
+    <h1>Gestor de Tareas Colaborativo</h1>
+    <a asp-page="Create" class="btn-create">+ Nueva Tarea</a>
+</div>
+
+<div class="board">
+    <!-- Columna Pendiente -->
+    <div class="column">
+        <div class="column-header pending">
+            <h2>Pendiente</h2>
+            <span class="count">@Model.PendingTasks.Count</span>
+        </div>
+        <div class="tasks-container">
+            @foreach (var task in Model.PendingTasks)
+            {
+                <div class="task-card">
+                    <div class="task-header">
+                        <h3>@task.Title</h3>
+                        <div class="task-actions">
+                            <a asp-page="Edit" asp-route-id="@task.Id" class="btn-icon" title="Editar">✏️</a>
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@task.Id" style="display:inline;">
+                                <button type="button" class="btn-icon btn-delete" data-id="@task.Id">🗑️</button>
+                            </form>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(task.Description))
+                    {
+                        <p class="task-description">@task.Description</p>
+                    }
+                    <div class="task-meta">
+                        <span class="task-user">👤 @task.AssignedUser</span>
+                        @if (task.DueDate.HasValue)
+                        {
+                            <span class="task-date">📅 @task.DueDate.Value.ToString("dd/MM/yyyy")</span>
+                        }
+                    </div>
+                    <form method="post" asp-page-handler="ChangeStatus" asp-route-id="@task.Id" asp-route-newStatus="@TaskManager.Models.TaskStatus.InProgress">
+                        <button type="button" class="btn-status-change btn-status"
+                                data-id="@task.Id"
+                                data-status="@TaskManager.Models.TaskStatus.InProgress">
+                            Mover a En Progreso
+                        </button>
+                    </form>
+                </div>
+            }
+            @if (Model.PendingTasks.Count == 0)
+            {
+                <p style="text-align: center; color: #95a5a6; padding: 20px;">No hay tareas pendientes</p>
+            }
+        </div>
+    </div>
+
+    <!-- Columna En Progreso -->
+    <div class="column">
+        <div class="column-header in-progress">
+            <h2>En Progreso</h2>
+            <span class="count">@Model.InProgressTasks.Count</span>
+        </div>
+        <div class="tasks-container">
+            @foreach (var task in Model.InProgressTasks)
+            {
+                <div class="task-card">
+                    <div class="task-header">
+                        <h3>@task.Title</h3>
+                        <div class="task-actions">
+                            <a asp-page="Edit" asp-route-id="@task.Id" class="btn-icon" title="Editar">✏️</a>
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@task.Id" style="display:inline;">
+                                <button type="submit" class="btn-icon" title="Eliminar" onclick="return confirm('¿Eliminar esta tarea?')">🗑️</button>
+                            </form>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(task.Description))
+                    {
+                        <p class="task-description">@task.Description</p>
+                    }
+                    <div class="task-meta">
+                        <span class="task-user">👤 @task.AssignedUser</span>
+                        @if (task.DueDate.HasValue)
+                        {
+                            <span class="task-date">📅 @task.DueDate.Value.ToString("dd/MM/yyyy")</span>
+                        }
+                    </div>
+                    <div class="status-buttons">
+                        <form method="post" asp-page-handler="ChangeStatus" asp-route-id="@task.Id" asp-route-newStatus="@TaskManager.Models.TaskStatus.Pending" style="display:inline;">
+                            <button type="submit" class="btn-status-back">← Pendiente</button>
+                        </form>
+                        <form method="post" asp-page-handler="ChangeStatus" asp-route-id="@task.Id" asp-route-newStatus="@TaskManager.Models.TaskStatus.Completed" style="display:inline;">
+                            <button type="submit" class="btn-status">Completar →</button>
+                        </form>
+                    </div>
+                </div>
+            }
+            @if (Model.InProgressTasks.Count == 0)
+            {
+                <p style="text-align: center; color: #95a5a6; padding: 20px;">No hay tareas en progreso</p>
+            }
+        </div>
+    </div>
+
+    <!-- Columna Completada -->
+    <div class="column">
+        <div class="column-header completed">
+            <h2>Completada</h2>
+            <span class="count">@Model.CompletedTasks.Count</span>
+        </div>
+        <div class="tasks-container">
+            @foreach (var task in Model.CompletedTasks)
+            {
+                <div class="task-card completed">
+                    <div class="task-header">
+                        <h3>@task.Title</h3>
+                        <div class="task-actions">
+                            <a asp-page="Edit" asp-route-id="@task.Id" class="btn-icon" title="Editar">✏️</a>
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@task.Id" style="display:inline;">
+                                <button type="submit" class="btn-icon" title="Eliminar" onclick="return confirm('¿Eliminar esta tarea?')">🗑️</button>
+                            </form>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(task.Description))
+                    {
+                        <p class="task-description">@task.Description</p>
+                    }
+                    <div class="task-meta">
+                        <span class="task-user">👤 @task.AssignedUser</span>
+                        @if (task.DueDate.HasValue)
+                        {
+                            <span class="task-date">📅 @task.DueDate.Value.ToString("dd/MM/yyyy")</span>
+                        }
+                    </div>
+                    <form method="post" asp-page-handler="ChangeStatus" asp-route-id="@task.Id" asp-route-newStatus="@TaskManager.Models.TaskStatus.InProgress">
+                        <button type="submit" class="btn-status-back">← En Progreso</button>
+                    </form>
+                </div>
+            }
+            @if (Model.CompletedTasks.Count == 0)
+            {
+                <p style="text-align: center; color: #95a5a6; padding: 20px;">No hay tareas completadas</p>
+            }
+        </div>
+    </div>
+</div>

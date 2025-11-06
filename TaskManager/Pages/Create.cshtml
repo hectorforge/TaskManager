@@ -1,0 +1,58 @@
+﻿@page
+@model TaskManager.Pages.CreateModel
+@{
+    ViewData["Title"] = "Nueva Tarea";
+}
+
+<div class="form-container">
+    <div class="form-header">
+        <h1>Nueva Tarea</h1>
+        <a asp-page="Index" class="btn-back">← Volver</a>
+    </div>
+
+    <form method="post" class="task-form">
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <div class="form-group">
+            <label asp-for="Task.Title" class="form-label">Título *</label>
+            <input asp-for="Task.Title" class="form-input" placeholder="Ingrese el título de la tarea" />
+            <span asp-validation-for="Task.Title" class="validation-message"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Task.Description" class="form-label">Descripción</label>
+            <textarea asp-for="Task.Description" class="form-textarea" rows="4" placeholder="Describe los detalles de la tarea (opcional)"></textarea>
+            <span asp-validation-for="Task.Description" class="validation-message"></span>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="Task.DueDate" class="form-label">Fecha de Vencimiento</label>
+                <input asp-for="Task.DueDate" type="date" class="form-input" />
+                <span asp-validation-for="Task.DueDate" class="validation-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Task.Status" class="form-label">Estado</label>
+                <select asp-for="Task.Status" class="form-select" asp-items="Html.GetEnumSelectList<TaskManager.Models.TaskStatus>()">
+                </select>
+                <span asp-validation-for="Task.Status" class="validation-message"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Task.AssignedUser" class="form-label">Usuario Asignado *</label>
+            <input asp-for="Task.AssignedUser" class="form-input" placeholder="Nombre del usuario responsable" />
+            <span asp-validation-for="Task.AssignedUser" class="validation-message"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Crear Tarea</button>
+            <a asp-page="Index" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
