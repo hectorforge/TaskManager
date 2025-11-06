@@ -4,6 +4,10 @@
     ViewData["Title"] = "Gestor de Tareas";
 }
 
+<form method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
 <div class="header">
     <h1>Gestor de Tareas Colaborativo</h1>
     <a asp-page="Create" class="btn-create">+ Nueva Tarea</a>
@@ -11,7 +15,7 @@
 
 <div class="board">
     <!-- Columna Pendiente -->
-    <div class="column">
+    <div class="column" data-status="0">
         <div class="column-header pending">
             <h2>Pendiente</h2>
             <span class="count">@Model.PendingTasks.Count</span>
@@ -19,14 +23,12 @@
         <div class="tasks-container">
             @foreach (var task in Model.PendingTasks)
             {
-                <div class="task-card">
+                <div class="task-card" data-task-id="@task.Id">
                     <div class="task-header">
                         <h3>@task.Title</h3>
                         <div class="task-actions">
                             <a asp-page="Edit" asp-route-id="@task.Id" class="btn-icon" title="Editar">✏️</a>
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@task.Id" style="display:inline;">
-                                <button type="button" class="btn-icon btn-delete" data-id="@task.Id">🗑️</button>
-                            </form>
+                            <button type="button" class="btn-icon btn-delete" data-id="@task.Id">🗑️</button>
                         </div>
                     </div>
                     @if (!string.IsNullOrEmpty(task.Description))
@@ -40,24 +42,22 @@
                             <span class="task-date">📅 @task.DueDate.Value.ToString("dd/MM/yyyy")</span>
                         }
                     </div>
-                    <form method="post" asp-page-handler="ChangeStatus" asp-route-id="@task.Id" asp-route-newStatus="@TaskManager.Models.TaskStatus.InProgress">
-                        <button type="button" class="btn-status-change btn-status"
-                                data-id="@task.Id"
-                                data-status="@TaskManager.Models.TaskStatus.InProgress">
+                    <div class="task-buttons">
+                        <button type="button" class="btn-status" data-id="@task.Id" data-status="1">
                             Mover a En Progreso
                         </button>
-                    </form>
+                    </div>
                 </div>
             }
             @if (Model.PendingTasks.Count == 0)
             {
-                <p style="text-align: center; color: #95a5a6; padding: 20px;">No hay tareas pendientes</p>
+                <p class="empty-message">No hay tareas pendientes</p>
             }
         </div>
     </div>
 
     <!-- Columna En Progreso -->
-    <div class="column">
+    <div class="column" data-status="1">
         <div class="column-header in-progress">
             <h2>En Progreso</h2>
             <span class="count">@Model.InProgressTasks.Count</span>
@@ -65,14 +65,12 @@
         <div class="tasks-container">
             @foreach (var task in Model.InProgressTasks)
             {
-                <div class="task-card">
+                <div class="task-card" data-task-id="@task.Id">
                     <div class="task-header">
                         <h3>@task.Title</h3>
                         <div class="task-actions">
                             <a asp-page="Edit" asp-route-id="@task.Id" class="btn-icon" title="Editar">✏️</a>
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@task.Id" style="display:inline;">
-                                <button type="submit" class="btn-icon" title="Eliminar" onclick="return confirm('¿Eliminar esta tarea?')">🗑️</button>
-                            </form>
+                            <button type="button" class="btn-icon btn-delete" data-id="@task.Id">🗑️</button>
                         </div>
                     </div>
                     @if (!string.IsNullOrEmpty(task.Description))
@@ -86,25 +84,25 @@
                             <span class="task-date">📅 @task.DueDate.Value.ToString("dd/MM/yyyy")</span>
                         }
                     </div>
-                    <div class="status-buttons">
-                        <form method="post" asp-page-handler="ChangeStatus" asp-route-id="@task.Id" asp-route-newStatus="@TaskManager.Models.TaskStatus.Pending" style="display:inline;">
-                            <button type="submit" class="btn-status-back">← Pendiente</button>
-                        </form>
-                        <form method="post" asp-page-handler="ChangeStatus" asp-route-id="@task.Id" asp-route-newStatus="@TaskManager.Models.TaskStatus.Completed" style="display:inline;">
-                            <button type="submit" class="btn-status">Completar →</button>
-                        </form>
+                    <div class="task-buttons status-buttons">
+                        <button type="button" class="btn-status-back" data-id="@task.Id" data-status="0">
+                            ← Pendiente
+                        </button>
+                        <button type="button" class="btn-status" data-id="@task.Id" data-status="2">
+                            Completar →
+                        </button>
                     </div>
                 </div>
             }
             @if (Model.InProgressTasks.Count == 0)
             {
-                <p style="text-align: center; color: #95a5a6; padding: 20px;">No hay tareas en progreso</p>
+                <p class="empty-message">No hay tareas en progreso</p>
             }
         </div>
     </div>
 
     <!-- Columna Completada -->
-    <div class="column">
+    <div class="column" data-status="2">
         <div class="column-header completed">
             <h2>Completada</h2>
             <span class="count">@Model.CompletedTasks.Count</span>
@@ -112,14 +110,12 @@
         <div class="tasks-container">
             @foreach (var task in Model.CompletedTasks)
             {
-                <div class="task-card completed">
+                <div class="task-card completed" data-task-id="@task.Id">
                     <div class="task-header">
                         <h3>@task.Title</h3>
                         <div class="task-actions">
                             <a asp-page="Edit" asp-route-id="@task.Id" class="btn-icon" title="Editar">✏️</a>
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@task.Id" style="display:inline;">
-                                <button type="submit" class="btn-icon" title="Eliminar" onclick="return confirm('¿Eliminar esta tarea?')">🗑️</button>
-                            </form>
+                            <button type="button" class="btn-icon btn-delete" data-id="@task.Id">🗑️</button>
                         </div>
                     </div>
                     @if (!string.IsNullOrEmpty(task.Description))
@@ -133,15 +129,206 @@
                             <span class="task-date">📅 @task.DueDate.Value.ToString("dd/MM/yyyy")</span>
                         }
                     </div>
-                    <form method="post" asp-page-handler="ChangeStatus" asp-route-id="@task.Id" asp-route-newStatus="@TaskManager.Models.TaskStatus.InProgress">
-                        <button type="submit" class="btn-status-back">← En Progreso</button>
-                    </form>
+                    <div class="task-buttons">
+                        <button type="button" class="btn-status-back" data-id="@task.Id" data-status="1">
+                            ← En Progreso
+                        </button>
+                    </div>
                 </div>
             }
             @if (Model.CompletedTasks.Count == 0)
             {
-                <p style="text-align: center; color: #95a5a6; padding: 20px;">No hay tareas completadas</p>
+                <p class="empty-message">No hay tareas completadas</p>
             }
         </div>
     </div>
 </div>
+
+<style>
+    .task-card {
+        transition: all 0.3s ease;
+    }
+
+    .empty-message {
+        text-align: center;
+        color: #95a5a6;
+        padding: 20px;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        function adjuntarEventos() {
+            document.querySelectorAll('.btn-delete').forEach(button => {
+                button.replaceWith(button.cloneNode(true));
+            });
+
+            document.querySelectorAll('.btn-delete').forEach(button => {
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+
+                    if (!confirm('¿Estás seguro de eliminar esta tarea?')) {
+                        return;
+                    }
+
+                    const taskId = this.dataset.id;
+                    const taskCard = this.closest('.task-card');
+                    const column = this.closest('.column');
+
+                    try {
+                        const response = await fetch(`/?handler=Delete&id=${taskId}`, {
+                            method: 'POST',
+                            headers: {
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            }
+                        });
+
+                        if (response.ok) {
+                            taskCard.style.opacity = '0';
+                            taskCard.style.transform = 'scale(0.8)';
+                            setTimeout(() => {
+                                taskCard.remove();
+                                actualizarContadores();
+                                verificarColumnaVacia(column);
+                            }, 300);
+                        } else {
+                            alert('Error al eliminar la tarea');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error al eliminar la tarea');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-status, .btn-status-back').forEach(button => {
+                button.replaceWith(button.cloneNode(true));
+            });
+
+            document.querySelectorAll('.btn-status, .btn-status-back').forEach(button => {
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+
+                    const taskId = this.dataset.id;
+                    const newStatus = this.dataset.status;
+                    const taskCard = this.closest('.task-card');
+                    const currentColumn = this.closest('.column');
+
+                    try {
+                        const response = await fetch(`/?handler=ChangeStatus&id=${taskId}&newStatus=${newStatus}`, {
+                            method: 'POST',
+                            headers: {
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            }
+                        });
+
+                        if (response.ok) {
+                            taskCard.style.opacity = '0';
+                            taskCard.style.transform = 'translateX(-20px)';
+
+                            setTimeout(() => {
+                                const targetColumn = document.querySelector(`.column[data-status="${newStatus}"]`);
+                                const tasksContainer = targetColumn.querySelector('.tasks-container');
+                                const emptyMessage = tasksContainer.querySelector('.empty-message');
+                                if (emptyMessage) {
+                                    emptyMessage.remove();
+                                }
+                                actualizarBotonesTarea(taskCard, parseInt(newStatus));
+
+                                if (newStatus === '2') {
+                                    taskCard.classList.add('completed');
+                                } else {
+                                    taskCard.classList.remove('completed');
+                                }
+
+                                tasksContainer.insertBefore(taskCard, tasksContainer.firstChild);
+
+                                taskCard.style.opacity = '0';
+                                taskCard.style.transform = 'translateX(20px)';
+                                setTimeout(() => {
+                                    taskCard.style.transition = 'all 0.3s ease';
+                                    taskCard.style.opacity = '1';
+                                    taskCard.style.transform = 'translateX(0)';
+                                }, 10);
+
+                                actualizarContadores();
+                                verificarColumnaVacia(currentColumn);
+                                adjuntarEventos();
+                            }, 300);
+                        } else {
+                            alert('Error al cambiar el estado de la tarea');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error al cambiar el estado de la tarea');
+                    }
+                });
+            });
+        }
+
+        function actualizarContadores() {
+            document.querySelectorAll('.column').forEach(column => {
+                const count = column.querySelectorAll('.task-card').length;
+                const countSpan = column.querySelector('.count');
+                if (countSpan) {
+                    countSpan.textContent = count;
+                }
+            });
+        }
+
+        function verificarColumnaVacia(column) {
+            const tasksContainer = column.querySelector('.tasks-container');
+            const taskCards = tasksContainer.querySelectorAll('.task-card');
+
+            if (taskCards.length === 0 && !tasksContainer.querySelector('.empty-message')) {
+                const emptyMessage = document.createElement('p');
+                emptyMessage.className = 'empty-message';
+
+                const columnHeader = column.querySelector('.column-header');
+                if (columnHeader.classList.contains('pending')) {
+                    emptyMessage.textContent = 'No hay tareas pendientes';
+                } else if (columnHeader.classList.contains('in-progress')) {
+                    emptyMessage.textContent = 'No hay tareas en progreso';
+                } else {
+                    emptyMessage.textContent = 'No hay tareas completadas';
+                }
+
+                tasksContainer.appendChild(emptyMessage);
+            }
+        }
+
+        function actualizarBotonesTarea(taskCard, status) {
+            const buttonsContainer = taskCard.querySelector('.task-buttons');
+            const taskId = taskCard.dataset.taskId;
+
+            if (status === 0) {
+                buttonsContainer.className = 'task-buttons';
+                buttonsContainer.innerHTML = `
+                    <button type="button" class="btn-status" data-id="${taskId}" data-status="1">
+                        Mover a En Progreso
+                    </button>
+                `;
+            } else if (status === 1) {
+                buttonsContainer.className = 'task-buttons status-buttons';
+                buttonsContainer.innerHTML = `
+                    <button type="button" class="btn-status-back" data-id="${taskId}" data-status="0">
+                        ← Pendiente
+                    </button>
+                    <button type="button" class="btn-status" data-id="${taskId}" data-status="2">
+                        Completar →
+                    </button>
+                `;
+            } else {
+                buttonsContainer.className = 'task-buttons';
+                buttonsContainer.innerHTML = `
+                    <button type="button" class="btn-status-back" data-id="${taskId}" data-status="1">
+                        ← En Progreso
+                    </button>
+                `;
+            }
+        }
+
+        adjuntarEventos();
+    });
+</script>
