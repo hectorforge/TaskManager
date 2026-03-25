@@ -41,6 +41,18 @@
       "name": "Vista principal",
       "description": "Pantalla principal del sistema mostrando la lista de tareas gestionadas por el usuario.",
       "order": 1
+    },
+        {
+      "url": "https://raw.githubusercontent.com/hectorforge/TaskManager/main/assets/2.png",
+      "name": "Foto 2",
+      "description": "Una descripcion interesante 2",
+      "order": 2
+    },
+        {
+      "url": "https://raw.githubusercontent.com/hectorforge/TaskManager/main/assets/3.png",
+      "name": "Foto 3",
+      "description": "Una descripcion interesante 3",
+      "order": 3
     }
   ],
 
