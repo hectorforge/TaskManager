@@ -1,0 +1,55 @@
+{
+  "title": "Task Manager - Sistema de Gestión de Tareas",
+  "description": "Aplicación web desarrollada en ASP.NET Core con Razor Pages para la gestión eficiente de tareas, implementando asincronismo completo y buenas prácticas de desarrollo backend en .NET.",
+  "problemSolved": "Centralizar la gestión de tareas y mejorar el rendimiento mediante operaciones asíncronas, evitando bloqueos y optimizando la experiencia del usuario en aplicaciones web.",
+
+  "stack": [
+    "C#",
+    "ASP.NET Core",
+    "Razor Pages",
+    ".NET",
+    "Entity Framework Core",
+    "SQL Server"
+  ],
+
+  "tags": [
+    "task management",
+    "aspnetcore",
+    "razor pages",
+    "backend",
+    "async programming"
+  ],
+
+  "useCases": [
+    "Gestión de tareas personales o empresariales",
+    "Seguimiento de actividades pendientes",
+    "Aplicaciones CRUD empresariales",
+    "Base para sistemas administrativos"
+  ],
+
+  "responsibilities": [
+    "Diseño e implementación del backend en ASP.NET Core",
+    "Implementación de asincronismo en operaciones de datos",
+    "Modelado de entidades y acceso a datos con Entity Framework",
+    "Construcción de interfaces con Razor Pages",
+    "Estructuración del proyecto siguiendo buenas prácticas"
+  ],
+
+  "images": [
+    {
+      "url": "https://raw.githubusercontent.com/hectorforge/TaskManager/main/assets/1.png",
+      "name": "Vista principal",
+      "description": "Pantalla principal del sistema mostrando la lista de tareas gestionadas por el usuario.",
+      "order": 1
+    }
+  ],
+
+  "category": "BACKEND",
+  "status": "ACTIVE",
+  "architecture": "MONOLITH",
+  "complexityLevel": "MEDIUM",
+
+  "featured": true,
+
+  "demo": ""
+}
